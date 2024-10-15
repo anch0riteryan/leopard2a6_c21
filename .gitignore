@@ -1,0 +1,4 @@
+obj/*
+.vscode/*
+*.elf
+*.map
