@@ -57,4 +57,59 @@ void init_system_clk_48mhz () {
 	LDRFRAC = 0.6875 x 16 = 11
 	LDR = 2929 - 1 2928
 	*/
+	OSCCTRL->DPLLRATIO = (OSCCTRL_DPLLRATIO_Type) {
+		.bit.LDR = 2928, //96MHz
+		.bit.LDRFRAC = 11
+	};
+	while (OSCCTRL->DPLLSYNCBUSY.bit.DPLLRATIO);
+
+	OSCCTRL->DPLLCTRLB = (OSCCTRL_DPLLCTRLB_Type) {
+		.bit.REFCLK = 0, //0:XOSC32K 2:GCLK FROM OSCCTRL_GCLK_ID_FDPLL
+		.bit.WUF = 0,
+		.bit.LPEN = 0,
+		.bit.FILTER = 1,
+		.bit.LBYPASS = 0,
+		.bit.LTIME = 0,
+		.bit.DIV = 0
+	};
+
+	OSCCTRL->DPLLCTRLA = (OSCCTRL_DPLLCTRLA_Type) {
+		.bit.ONDEMAND = 0,
+		.bit.ENABLE = 1
+	};
+	while (!OSCCTRL->DPLLSTATUS.bit.CLKRDY && !OSCCTRL->DPLLSTATUS.bit.LOCK);
+	while (OSCCTRL->DPLLSYNCBUSY.bit.ENABLE);
+
+	//8MHZ
+	GCLK->GENCTRL[GCLK_ID_8MHZ] = (GCLK_GENCTRL_Type ) {
+		.bit.DIV = 12,
+		.bit.DIVSEL = 0,
+		.bit.OE = 0,
+		.bit.IDC = 1,
+		.bit.GENEN = 1,
+		.bit.SRC = GCLK_GENCTRL_SRC_DPLL96M_Val
+	};
+	while (GCLK->SYNCBUSY.bit.GENCTRL);
+
+	//96MHZ GCLK
+	GCLK->GENCTRL[GCLK_ID_96MHZ] = (GCLK_GENCTRL_Type ) {
+		.bit.DIV = 0,
+		.bit.DIVSEL = 0,
+		.bit.OE = 0,
+		.bit.IDC = 1,
+		.bit.GENEN = 1,
+		.bit.SRC = GCLK_GENCTRL_SRC_DPLL96M_Val
+	};
+	while (GCLK->SYNCBUSY.bit.GENCTRL);
+
+	//MAIN GCLK
+	GCLK->GENCTRL[GCLK_ID_48MHZ] = (GCLK_GENCTRL_Type ) {
+		.bit.DIV = 2,
+		.bit.DIVSEL = 0,
+		.bit.OE = 0,
+		.bit.IDC = 1,
+		.bit.GENEN = 1,
+		.bit.SRC = GCLK_GENCTRL_SRC_DPLL96M_Val
+	};
+	while (GCLK->SYNCBUSY.bit.GENCTRL);
 }
