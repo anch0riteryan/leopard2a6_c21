@@ -47,7 +47,7 @@ LDFLAGS += -DDONT_USE_CMSIS_INIT -D__SAMC21J18A__
 LDFLAGS += -L$(THIRDPARTY_PATH)/Include
 LDFLAGS += -L$(THIRDPARTY_PATH)/Lib/GCC
 LDFLAGS += -lc -lm -lg -lgcc -lrdimon -lnosys
-LDFLAGS += -Wl,--gc-sections -Wl,--print-memory-usage -Wl,--cref -Wl,-Map=./$(APP_NAME).map
+LDFLAGS += -Wl,--gc-sections -Wl,--print-memory-usage -Wl,--no-warn-rwx-segments -Wl,--cref -Wl,-Map=./$(APP_NAME).map
 LDFLAGS += -g -gdwarf-4 -O0
 
 # ARM DSP and math
