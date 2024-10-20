@@ -1,6 +1,9 @@
 #include <leopard2a6_c21.h>
 #include <nvm.h>
 #include <gpio.h>
+#include <dmac.h>
+#include <ppm_reader.h>
+
 
 Task routine;
 
@@ -10,7 +13,17 @@ int main (void ) {
 
 	init_gpio ();
 
+	init_dmac ();
+	init_eic ();
+	init_evsys ();
+
+	init_ppm_reader ();
+
 	SysTick_Config (48000);
+
+	NVIC_EnableIRQ (TCC0_IRQn); NVIC_EnableIRQ (TCC1_IRQn); NVIC_EnableIRQ (TCC2_IRQn);
+	NVIC_EnableIRQ (DMAC_IRQn);
+	__enable_irq ();
 
 	while (1) {
 		if (routine.is_1hz) {

@@ -10,3 +10,5 @@ typedef struct _task {
 extern Task routine;
 
 void init_system_clk_48mhz (void );
+void init_evsys (void );
+void init_eic (void );

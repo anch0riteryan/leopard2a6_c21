@@ -109,3 +109,147 @@ void init_system_clk_48mhz () {
 	for (uint32_t delay = 0; delay < SOFT_DELAY; delay++);
 	while (GCLK->SYNCBUSY.bit.GENCTRL);
 }
+
+void init_evsys () {
+	MCLK->APBCMASK.bit.EVSYS_ = 1;
+
+	EVSYS->CTRLA.bit.SWRST = 1;
+	while (EVSYS->CTRLA.bit.SWRST);
+
+	//ppm retrigger
+	GCLK->PCHCTRL[EVSYS_GCLK_ID_0] = (GCLK_PCHCTRL_Type) {
+		.bit.WRTLOCK = 0,
+		.bit.GEN = 0,
+		.bit.CHEN = 1
+	};
+
+	EVSYS->CHANNEL[0] = (EVSYS_CHANNEL_Type) {
+		.bit.EVGEN = EVSYS_ID_GEN_EIC_EXTINT_13,
+		.bit.PATH = EVSYS_CHANNEL_PATH_SYNCHRONOUS_Val,
+		.bit.EDGSEL = EVSYS_CHANNEL_EDGSEL_RISING_EDGE_Val,
+		.bit.RUNSTDBY = 0,
+		.bit.ONDEMAND = 0
+	};
+	EVSYS->USER[EVSYS_ID_USER_TCC0_EV_0].bit.CHANNEL = 1; //evsys ch-0
+	EVSYS->USER[EVSYS_ID_USER_TCC1_EV_0].bit.CHANNEL = 1;
+	EVSYS->USER[EVSYS_ID_USER_TCC2_EV_0].bit.CHANNEL = 1;
+
+	//EVSYS CH1 - CH8 clock setup
+	for (uint8_t evsys_channel = EVSYS_GCLK_ID_1; evsys_channel <= EVSYS_GCLK_ID_8; evsys_channel++) {
+		GCLK->PCHCTRL[evsys_channel] = (GCLK_PCHCTRL_Type) {
+			.bit.WRTLOCK = 0,
+			.bit.GEN = 0,
+			.bit.CHEN = 1
+		};
+	}
+
+	//radio-1 capture
+	EVSYS->CHANNEL[1] = (EVSYS_CHANNEL_Type) {
+		.bit.EVGEN = EVSYS_ID_GEN_EIC_EXTINT_15,
+		.bit.PATH = EVSYS_CHANNEL_PATH_SYNCHRONOUS_Val,
+		.bit.EDGSEL = EVSYS_CHANNEL_EDGSEL_FALLING_EDGE_Val,
+		.bit.RUNSTDBY = 0,
+		.bit.ONDEMAND = 0
+	};
+	EVSYS->USER[EVSYS_ID_USER_TCC0_MC_0].bit.CHANNEL = 2; //evsys ch-1
+
+	//radio-2 capture
+	EVSYS->CHANNEL[2] = (EVSYS_CHANNEL_Type) {
+		.bit.EVGEN = EVSYS_ID_GEN_EIC_EXTINT_14,
+		.bit.PATH = EVSYS_CHANNEL_PATH_SYNCHRONOUS_Val,
+		.bit.EDGSEL = EVSYS_CHANNEL_EDGSEL_FALLING_EDGE_Val,
+		.bit.RUNSTDBY = 0,
+		.bit.ONDEMAND = 0
+	};
+	EVSYS->USER[EVSYS_ID_USER_TCC0_MC_1].bit.CHANNEL = 3; //evsys ch-2
+
+	//radio-3 capture
+	EVSYS->CHANNEL[3] = (EVSYS_CHANNEL_Type) {
+		.bit.EVGEN = EVSYS_ID_GEN_EIC_EXTINT_13,
+		.bit.PATH = EVSYS_CHANNEL_PATH_SYNCHRONOUS_Val,
+		.bit.EDGSEL = EVSYS_CHANNEL_EDGSEL_FALLING_EDGE_Val,
+		.bit.RUNSTDBY = 0,
+		.bit.ONDEMAND = 0
+	};
+	EVSYS->USER[EVSYS_ID_USER_TCC0_MC_2].bit.CHANNEL = 4; //evsys ch-3
+
+	//radio-4 capture
+	EVSYS->CHANNEL[4] = (EVSYS_CHANNEL_Type) {
+		.bit.EVGEN = EVSYS_ID_GEN_EIC_EXTINT_12,
+		.bit.PATH = EVSYS_CHANNEL_PATH_SYNCHRONOUS_Val,
+		.bit.EDGSEL = EVSYS_CHANNEL_EDGSEL_FALLING_EDGE_Val,
+		.bit.RUNSTDBY = 0,
+		.bit.ONDEMAND = 0
+	};
+	EVSYS->USER[EVSYS_ID_USER_TCC0_MC_3].bit.CHANNEL = 5; //evsys ch-4
+
+	//radio-5 capture
+	EVSYS->CHANNEL[5] = (EVSYS_CHANNEL_Type) {
+		.bit.EVGEN = EVSYS_ID_GEN_EIC_EXTINT_7,
+		.bit.PATH = EVSYS_CHANNEL_PATH_SYNCHRONOUS_Val,
+		.bit.EDGSEL = EVSYS_CHANNEL_EDGSEL_FALLING_EDGE_Val,
+		.bit.RUNSTDBY = 0,
+		.bit.ONDEMAND = 0
+	};
+	EVSYS->USER[EVSYS_ID_USER_TCC1_MC_0].bit.CHANNEL = 6; //evsys ch-5
+
+	//radio-6 capture
+	EVSYS->CHANNEL[6] = (EVSYS_CHANNEL_Type) {
+		.bit.EVGEN = EVSYS_ID_GEN_EIC_EXTINT_6,
+		.bit.PATH = EVSYS_CHANNEL_PATH_SYNCHRONOUS_Val,
+		.bit.EDGSEL = EVSYS_CHANNEL_EDGSEL_FALLING_EDGE_Val,
+		.bit.RUNSTDBY = 0,
+		.bit.ONDEMAND = 0
+	};
+	EVSYS->USER[EVSYS_ID_USER_TCC1_MC_1].bit.CHANNEL = 7; //evsys ch-6
+
+	//radio-7 capture
+	EVSYS->CHANNEL[7] = (EVSYS_CHANNEL_Type) {
+		.bit.EVGEN = EVSYS_ID_GEN_EIC_EXTINT_5,
+		.bit.PATH = EVSYS_CHANNEL_PATH_SYNCHRONOUS_Val,
+		.bit.EDGSEL = EVSYS_CHANNEL_EDGSEL_FALLING_EDGE_Val,
+		.bit.RUNSTDBY = 0,
+		.bit.ONDEMAND = 0
+	};
+	EVSYS->USER[EVSYS_ID_USER_TCC2_MC_0].bit.CHANNEL = 8; //evsys ch-7
+
+	//radio-8 capture
+	EVSYS->CHANNEL[8] = (EVSYS_CHANNEL_Type) {
+		.bit.EVGEN = EVSYS_ID_GEN_EIC_EXTINT_4,
+		.bit.PATH = EVSYS_CHANNEL_PATH_SYNCHRONOUS_Val,
+		.bit.EDGSEL = EVSYS_CHANNEL_EDGSEL_FALLING_EDGE_Val,
+		.bit.RUNSTDBY = 0,
+		.bit.ONDEMAND = 0
+	};
+	EVSYS->USER[EVSYS_ID_USER_TCC2_MC_1].bit.CHANNEL = 9; //evsys ch-8
+
+}
+
+void init_eic () {
+	GCLK->PCHCTRL[EIC_GCLK_ID].bit.GEN = 0;
+	GCLK->PCHCTRL[EIC_GCLK_ID].bit.CHEN = 1;
+
+	EIC->CTRLA.bit.SWRST = 1;
+	while (EIC->CTRLA.bit.SWRST);
+
+	EIC->EIC_ASYNCH.bit.ASYNCH = 0x0FFFF;
+
+	EIC->CONFIG[1].bit.SENSE4 = EIC_CONFIG_SENSE4_HIGH_Val;
+	EIC->CONFIG[1].bit.SENSE5 = EIC_CONFIG_SENSE5_HIGH_Val;
+	EIC->CONFIG[1].bit.SENSE6 = EIC_CONFIG_SENSE6_HIGH_Val;
+	EIC->CONFIG[1].bit.SENSE7 = EIC_CONFIG_SENSE7_HIGH_Val;
+
+	EIC->CONFIG[0].bit.SENSE4 = EIC_CONFIG_SENSE4_HIGH_Val;
+	EIC->CONFIG[0].bit.SENSE5 = EIC_CONFIG_SENSE5_HIGH_Val;
+	EIC->CONFIG[0].bit.SENSE6 = EIC_CONFIG_SENSE6_HIGH_Val;
+	EIC->CONFIG[0].bit.SENSE7 = EIC_CONFIG_SENSE7_HIGH_Val;
+
+	EIC->EVCTRL.reg = \
+		(1 << 12) | (1 << 13) | (1 << 14) | (1 << 15) | \
+		(1 << 4)  | (1 << 5)  | (1 << 6)  | (1 << 7);
+	EIC->INTFLAG.reg = 0xFFFF;
+
+	EIC->CTRLA.bit.CKSEL = 0;
+	EIC->CTRLA.bit.ENABLE = 1;
+	while (EIC->SYNCBUSY.bit.ENABLE);
+}
