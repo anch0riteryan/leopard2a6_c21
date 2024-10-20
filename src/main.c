@@ -1,11 +1,14 @@
 #include <leopard2a6_c21.h>
 #include <nvm.h>
+#include <gpio.h>
 
 Task routine;
 
 int main (void ) {
 	init_nvm ();
 	init_system_clk_48mhz ();
+
+	init_gpio ();
 
 	SysTick_Config (48000);
 
