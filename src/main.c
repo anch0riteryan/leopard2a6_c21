@@ -2,6 +2,7 @@
 #include <nvm.h>
 #include <gpio.h>
 #include <dmac.h>
+#include <mt_pwm.h>
 #include <ppm_reader.h>
 
 
@@ -17,6 +18,7 @@ int main (void ) {
 	init_eic ();
 	init_evsys ();
 
+	init_mt_pwm ();
 	init_ppm_reader ();
 
 	SysTick_Config (48000);
