@@ -10,6 +10,7 @@
 void init_ppm_reader (void );
 float ppm_phase_linear (uint32_t );
 float ppm_phase_joystick (uint32_t );
+float ppm_phase_3_state_sw (uint32_t );
 float ppm_phase_digital (uint32_t );
 
 extern volatile uint32_t ppm_width_raw[8];

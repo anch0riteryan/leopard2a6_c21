@@ -10,6 +10,8 @@ void init_mt_pwm () {
 
 	MCLK->APBCMASK.bit.TC0_ = 1;
 	MCLK->APBCMASK.bit.TC1_ = 1;
+	MCLK->APBCMASK.bit.TC2_ = 1;
+	MCLK->APBCMASK.bit.TC3_ = 1;
 
 	// GCLK TC0 = TC1
 	GCLK->PCHCTRL[TC0_GCLK_ID].bit.GEN = 0;
@@ -96,7 +98,7 @@ void init_hs_tc (Tc *t) {
 	t->COUNT8.CTRLBCLR.bit.DIR = 1;
 	t->COUNT8.WAVE.bit.WAVEGEN = TC_WAVE_WAVEGEN_NPWM_Val;
 	t->COUNT8.DRVCTRL.bit.INVEN0 = 1;
-	t->COUNT8.DRVCTRL.bit.INVEN1 = 1;
+	//t->COUNT8.DRVCTRL.bit.INVEN1 = 1;
 	//t->COUNT8.INTENSET.bit.OVF = 1;
 
 	t->COUNT8.PERBUF.bit.PERBUF = TC_MAIN_PWM_PERIOD - 1;
